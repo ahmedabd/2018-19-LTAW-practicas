@@ -10,32 +10,37 @@ http.createServer((req,res) => {
   console.log("Recurso soliticado (URL): " + req.url)
 
   var q = url.parse(req.url, true);
-
   console.log("Pathname: " + q.pathname)
-  console.log("search:" + q.search)
-  console.log("Busqueda:")
-  var qdata = q.query
-  console.log(qdata)
 
-  console.log("Artículo: " + qdata.articulo)
-  console.log("Color: " + qdata.color)
+  var file_name = ""
+    if (q.pathname == "/"){
+      file_name = "index.html"
+    }else{
+      file_name = q.pathname.split("/")[1];
+    }
 
-  var mime = "text/html"
-  res.writeHead(200, {'Content-Type' : mime});
+    type_file = file_name.split(".")[1];
 
-  var msg = `
-  <!DOCTYPE html>
-  <html lang="es" dir="ltr">
-    <head>
-      <meta charset="utf-8">
-      <title>Mi tienda</title>
-    </head>
-    <body>
-      <p> ¡BIENVENIDO A MI TIENDA! </p>
-    </body>
-  </html>
-  `
+    console.log(file_name);
 
-  res.write(msg);
-  res.end();
+
+  fs.readFile(file_name, function(err, data){
+    if (err){
+      res.writeHead(404, {'Content_Type': 'text/html'});
+      return res.end("404 Not Found");
+    }
+
+    mime = "text/html"
+    console.log(type_file);
+    if (type_file == 'png' || type_file == 'png'){
+      mime = "image/" + type_file
+    }else if (type_file == "css"){
+      mime = "text/css"
+    };
+    res.write(data);
+    res.write(mime);
+    console.log("Peticion atendida");
+    console.log();
+    return res.end();
+  });
 }).listen(8080);
