@@ -1,6 +1,7 @@
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
+var cookies = 0;
 
 console.log("Arrancando servidor...")
 
@@ -25,7 +26,7 @@ http.createServer((req,res) => {
 
       //-- Hay definida una Cookie.
       } else {
-        content += "ahmed"
+        content += cookies;
       }
       res.statusCode = 200;
     }else{
@@ -48,9 +49,33 @@ http.createServer((req,res) => {
       mime = "text/css"
     };
 
+    cookies = Math.floor(Math.random()*101)
     if(file_name == "login.html"){
-      res.setHeader('Set-Cookie', 'user=ahmed')
+      res.setHeader('Set-Cookie', cookies)
+    }else if (file_name == "form_ok.html"){
+      if (req.method === 'POST'){
+        req.on('data', chunk => {
+          data = chunk.toString();
+          content += data;
+          content += `
+                </p>
+                <a href="form.html">[Formulario]</a>
+              </body>
+            </html>
+            `
+          console.log("Datos recibidios: " + data)
+          res.statusCode = 200;
+        });
+        req.on('end', ()=>{
+          res.setHeader('Content_Type', 'text/html')
+          res.write(content);
+          res.end();
+        })
+        return
+      }
     }
+
+
 
     res.write(data);
     res.write(content);
