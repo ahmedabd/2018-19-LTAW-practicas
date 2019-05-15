@@ -38,7 +38,6 @@ http.createServer((req,res) => {
       mime = "text/css"
     };
     res.write(data);
-    res.write(mime);
     console.log("Peticion atendida");
     console.log();
     return res.end();
